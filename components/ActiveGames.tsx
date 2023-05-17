@@ -107,8 +107,9 @@ export const ActiveGames = (props: Props) => {
                                 <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
                             }
                         >
-                            {games.map((item) => (
+                            {games.map((item,i) => (
                                 <TouchableOpacity
+                                    key={i}
                                     onPress={() => navigation.navigate('GameDetails', {gameId: item.id, ended: ended})}
                                 >
                                     <View style={styles.itemContainer}>

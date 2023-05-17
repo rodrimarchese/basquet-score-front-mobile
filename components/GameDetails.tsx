@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, Button} from 'react-native';
 import axios from "axios";
 import Scoreboard from "./ScoreBoard";
+import {EndGameDetails} from "./EndGameDetails";
 
 export const API_URL = 'http://192.168.40.85:8080';
 
@@ -51,7 +52,7 @@ export const GameDetails = ({route,navigation}: { route: any,navigation:any }) =
                             !ended ? (
                                 <Button title={'End Game'} onPress={() => handleEndGame(gameId)}/>
                             ) : (
-                                <Button title={'Start Game'} onPress={() => handleEndGame(gameId)}/>
+                                <EndGameDetails game={gameData} navigation={navigation}/>
                             )
                         }
                     </>

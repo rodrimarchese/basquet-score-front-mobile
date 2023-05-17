@@ -5,7 +5,7 @@ import {Picker} from "@react-native-picker/picker";
 import DropDownPicker from "react-native-dropdown-picker";
 import {Team} from "../App";
 
-export const StartGame = () => {
+export const ActiveGames = () => {
     const [team1, setTeam1] = useState("");
     const [team2, setTeam2] = useState("");
     const [teams, setTeams] = useState<Team[]>([]);

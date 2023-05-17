@@ -1,6 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, FlatList, ActivityIndicator, StyleSheet, Button, TouchableOpacity} from 'react-native';
+import {
+    View,
+    Text,
+    FlatList,
+    ActivityIndicator,
+    StyleSheet,
+    Button,
+    TouchableOpacity,
+    RefreshControl, ScrollView
+} from 'react-native';
 import axios from 'axios';
+import {GameDetails} from "./GameDetails";
 
 export const API_URL = 'http://192.168.40.85:8080';
 
@@ -26,6 +36,7 @@ export const ActiveGames = (props: Props) => {
     const [count, setCount] = useState(0);
     const [page, setPage] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
     const url = ended ? `${API_URL}/game/ended?limit=10&page=` : `${API_URL}/game/active?limit=10&page=`;
 
 
@@ -48,20 +59,6 @@ export const ActiveGames = (props: Props) => {
         }
     };
 
-    const renderItem = ({item}: any) => (
-        <TouchableOpacity
-            onPress={() => navigation.navigate(ended ? 'EndedDetails' : 'ActiveDetails', {gameId: item.id})}
-        >
-            <View style={styles.itemContainer}>
-
-                <Text>{item.homeTeamName}:{item.homeScore} - {item.awayTeamName}:{item.awayScore}</Text>
-
-                {/* Render other game details */}
-            </View>
-        </TouchableOpacity>
-
-    );
-
     const renderFooter = () => {
         if (!isLoading) return null;
         return (
@@ -78,19 +75,50 @@ export const ActiveGames = (props: Props) => {
         }
     };
 
-    console.log(count, page)
+    const handleRefresh = async () => {
+        if (!refreshing) {
+            setRefreshing(true);
+            setIsLoading(true);
+            try {
+                const response = await axios.get(url + page);
+                const newGames = response.data.games;
+                console.log(newGames)
+                setCount(response.data.count)
+                newGames && setGames(newGames)
+            } catch (error) {
+                console.error('Error fetching games:', error);
+            } finally {
+                setIsLoading(false);
+                setRefreshing(false)
+            }
+        }
+    };
+
+    console.log(count,page)
 
     return (
         <View style={styles.container}>
             {
                 games.length > 0 ? (
                     <>
-                        <FlatList
-                            data={games}
-                            renderItem={renderItem}
-                            keyExtractor={(item) => item.id.toString()}
-                            ListFooterComponent={renderFooter}
-                        />
+                        <ScrollView
+                            contentContainerStyle={{ flexGrow: 1 }}
+                            refreshControl={
+                                <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+                            }
+                        >
+                            {games.map((item) => (
+                                <TouchableOpacity
+                                    onPress={() => navigation.navigate('GameDetails', {gameId: item.id, ended: ended})}
+                                >
+                                    <View style={styles.itemContainer}>
+
+                                        <Text>{item.homeTeamName}:{item.homeScore} - {item.awayTeamName}:{item.awayScore}</Text>
+
+                                    </View>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
                         <View style={styles.buttonContainer}>
                             {count > (page + 1) * 10 && <Button title={"Load more"} onPress={handleLoadMore}/>}
                         </View>

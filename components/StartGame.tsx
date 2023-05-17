@@ -5,6 +5,9 @@ import { Picker } from "@react-native-picker/picker";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Team } from "../App";
 import axios from "axios";
+
+export const API_URL = "http://192.168.40.85:8080";
+
 // @ts-ignore
 import { IP } from "@env";
 
@@ -17,10 +20,9 @@ export const StartGame = ({ navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://${IP}:8080/team`);
+        const response = await fetch(API_URL + "/team");
         const data: Team[] = await response.json();
         setTeams(data);
-        console.log(data);
         if (data.length > 1) {
           setTeam1(data[0].name);
           setTeam2(data[1].name);

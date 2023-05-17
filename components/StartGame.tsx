@@ -3,8 +3,15 @@ import React, {useEffect, useState} from "react";
 import {Button, View, Text, StyleSheet} from "react-native";
 import {Picker} from "@react-native-picker/picker";
 import DropDownPicker from "react-native-dropdown-picker";
-import {Team} from "../App";
 import axios from "axios";
+
+export const API_URL = 'http://192.168.40.85:8080';
+export interface Team {
+    "id": string
+    "name": string
+    "createdAt": string
+}
+
 // @ts-ignore
 export const StartGame = ({navigation}) => {
     const [team1, setTeam1] = useState('');
@@ -14,7 +21,7 @@ export const StartGame = ({navigation}) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://192.168.40.85:8080/team');
+                const response = await fetch(API_URL+'/team');
                 const data: Team[] = await response.json();
                 setTeams(data);
                 if (data.length > 1) {

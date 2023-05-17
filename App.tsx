@@ -6,11 +6,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import {ActiveGames} from "./components/ActiveGames";
 import {EndedGames} from "./components/EndedGames";
 
-export interface Team {
-    "id": string
-    "name": string
-    "createdAt": string
-}
 
 // Components for navigation
 const Stack = createStackNavigator();

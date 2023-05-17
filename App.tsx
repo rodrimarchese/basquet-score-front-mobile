@@ -7,6 +7,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { ActiveGames } from "./components/ActiveGames";
 import { EndedGames } from "./components/EndedGames";
+import {EndedDetails} from "./components/EndedDetails";
+import {ActiveDetails} from "./components/ActiveDetails";
 
 export interface Team {
   id: string;
@@ -50,6 +52,9 @@ const App = () => {
         <Stack.Screen name="StartGame" component={StartGame} />
         <Stack.Screen name="ActiveGames" component={ActiveGames} />
         <Stack.Screen name="EndedGames" component={EndedGames} />
+        <Stack.Screen name="EndedDetails" component={EndedDetails} />
+        <Stack.Screen name="ActiveDetails" component={ActiveDetails} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -6,57 +6,11 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { Team } from "../App";
 // @ts-ignore
 import { IP } from "@env";
+import {ActiveGames} from "./ActiveGames";
 
-export const EndedGames = () => {
-  const [team1, setTeam1] = useState("");
-  const [team2, setTeam2] = useState("");
-  const [teams, setTeams] = useState<Team[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`http://${IP}:8080/team`);
-        const data: Team[] = await response.json();
-        setTeams(data);
-        console.log("ended: ", data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const logTeamNames = () => {
-    console.log(team1);
-    console.log(team2);
-  };
-
+// @ts-ignore
+export const EndedGames = ({navigation}) => {
   return (
-    <View style={{ padding: 16, backgroundColor: "#f5f5f5" }}>
-      {teams !== undefined && teams.length > 0 && (
-        <>
-          <Picker
-            selectedValue={team1}
-            onValueChange={(itemValue, itemIndex) => setTeam1(itemValue)}
-          >
-            {teams.map((team) => (
-              <Picker.Item key={team.id} label={team.name} value={team.id} />
-            ))}
-          </Picker>
-
-          <Picker
-            selectedValue={team2}
-            onValueChange={(itemValue, itemIndex) => setTeam2(itemValue)}
-          >
-            {teams.map((team) => (
-              <Picker.Item key={team.id} label={team.name} value={team.id} />
-            ))}
-          </Picker>
-
-          <Button title="Log Teams" onPress={logTeamNames} />
-        </>
-      )}
-    </View>
-  );
+      <ActiveGames ended={true} navigation={navigation}/>
+  )
 };

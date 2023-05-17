@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, FlatList, ActivityIndicator, StyleSheet, Button} from 'react-native';
+import {View, Text, FlatList, ActivityIndicator, StyleSheet, Button, TouchableOpacity} from 'react-native';
 import axios from 'axios';
 
 export const API_URL = 'http://192.168.40.85:8080';
@@ -15,12 +15,18 @@ interface Game {
     date: string;
 }
 
-export const ActiveGames = () => {
+interface Props {
+    ended?: boolean;
+    navigation?: any;
+}
+
+export const ActiveGames = (props: Props) => {
+    const {ended, navigation} = props;
     const [games, setGames] = useState<Game[]>([]);
     const [count, setCount] = useState(0);
     const [page, setPage] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
-
+    const url = ended ? `${API_URL}/game/ended?limit=10&page=` : `${API_URL}/game/active?limit=10&page=`;
 
 
     useEffect(() => {
@@ -30,7 +36,7 @@ export const ActiveGames = () => {
     const fetchGames = async (page: number) => {
         setIsLoading(true);
         try {
-            const response = await axios.get(`${API_URL}/game?limit=10&page=${page}`);
+            const response = await axios.get(url + page);
             const newGames = response.data.games;
             console.log(newGames)
             setCount(response.data.count)
@@ -43,10 +49,17 @@ export const ActiveGames = () => {
     };
 
     const renderItem = ({item}: any) => (
-        <View style={styles.itemContainer}>
-            <Text>{item.homeTeamName}:{item.homeScore} - {item.awayTeamName}:{item.awayScore}</Text>
-            {/* Render other game details */}
-        </View>
+        <TouchableOpacity
+            onPress={() => navigation.navigate(ended ? 'EndedDetails' : 'ActiveDetails', {gameId: item.id})}
+        >
+            <View style={styles.itemContainer}>
+
+                <Text>{item.homeTeamName}:{item.homeScore} - {item.awayTeamName}:{item.awayScore}</Text>
+
+                {/* Render other game details */}
+            </View>
+        </TouchableOpacity>
+
     );
 
     const renderFooter = () => {
@@ -60,27 +73,27 @@ export const ActiveGames = () => {
 
     const handleLoadMore = () => {
         if (!isLoading) {
-            fetchGames(page+1);
+            fetchGames(page + 1);
             setPage(page + 1);
         }
     };
 
-    console.log(count,page)
+    console.log(count, page)
 
     return (
         <View style={styles.container}>
             {
                 games.length > 0 ? (
                     <>
-                    <FlatList
-                        data={games}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.id.toString()}
-                        ListFooterComponent={renderFooter}
-                    />
-                    <View style={styles.buttonContainer}>
-                        {count > (page+1)*10 && <Button title={"Load more"} onPress={handleLoadMore}/>}
-                    </View>
+                        <FlatList
+                            data={games}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item.id.toString()}
+                            ListFooterComponent={renderFooter}
+                        />
+                        <View style={styles.buttonContainer}>
+                            {count > (page + 1) * 10 && <Button title={"Load more"} onPress={handleLoadMore}/>}
+                        </View>
                     </>
                 ) : !isLoading && (
                     <View style={styles.container}>
